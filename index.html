@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Adding Items to a List with Images</title>
+    <style>
+        #input-fields {
+            display: none;
+            margin: 0 auto;
+            width: 50%;
+            padding: 20px;
+            background: linear-gradient(to bottom right, blue, white);
+            border-radius: 5px;
+        }
+
+        #image-display {
+            width: 100px;
+            height: 100px;
+        }
+
+        .image-navigation {
+            margin-top: 20px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .list-item img {
+            margin-right: 20px;
+        }
+
+        .list-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .list-item span {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Add an Item</h1>
+    <button id="add-button">Add Item</button>
+    <ul id="my-list"></ul>
+    <div id="input-fields">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+        <br>
+        <label for="image1">Image 1:</label>
+        <input type="file" id="image1" name="image1">
+        <br>
+        <label for="image2">Image 2:</label>
+        <input type="file" id="image2" name="image2">
+        <br>
+        <button id="done-button">Done</button>
+    </div>
+    <div class="image-navigation">
+        <button id="prev-button">Previous Image</button>
+        <button id="next-button">Next Image</button>
+    </div>
+    <script>
+        const addButton = document.getElementById('add-button');
+        const myList = document.getElementById('my-list');
+        const inputFields = document.getElementById('input-fields');
+        const doneButton = document.getElementById('done-button');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        let currentImageIndex = 0;
+
+        addButton.addEventListener('click', () => {
+            inputFields.style.display = 'block';
+            addButton.style.display = 'none';
+        });
+
+        doneButton.addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const newItem = document.createElement('li');
+            newItem.classList.add('list-item');
+            if (imageInputs[0].files && imageInputs[0].files.length > 0) {
+                const imageDisplay = document.createElement('img');
+                imageDisplay.src = URL.createObjectURL(imageInputs[0].files[0]);
+                imageDisplay.id = 'image-display';
+                newItem.appendChild(imageDisplay);
+            } else if (imageInputs[1].files && imageInputs[1].files.length > 0) {
+                const imageDisplay = document.createElement('img');
+                imageDisplay.src = URL.createObjectURL(imageInputs[1].files[0]);
+                imageDisplay.id = 'image-display';
+                newItem.appendChild(imageDisplay);
+            }
+            newItem.innerHTML += `<strong>${name}</strong> - <span>${description}</span>`;
+            myList.appendChild(newItem);
+            inputFields.style.display = 'none';
+            addButton.style.display = 'block';
+            currentImageIndex = 0;
+        });
+
+        prevButton.addEventListener('click', () => {
+            const currentItem = myList.childNodes[myList.childNodes.length - 1];
+            currentImageIndex--;
+            if (currentImageIndex < 0) {
+                currentImageIndex = 0;
+            }
+            if (currentImageIndex >= currentItem.childNodes.length) {
+                currentImageIndex = currentItem.childNodes.length - 1;
+            }
+            currentItem.childNodes[currentImageIndex].src = URL.createObjectURL(imageInputs[currentImageIndex].files[0]);
+        });
+
+        nextButton.addEventListener('click', () => {
+            const currentItem = myList.childNodes[myList.childNodes.length - 1];
+            currentImageIndex++;
+            if (currentImageIndex >= currentItem.childNodes.length) {
+                currentImageIndex = currentItem.childNodes.length - 1;
+            }
+            if (currentImageIndex < 0) {
+                currentImageIndex = 0;
+            }
+            currentItem.childNodes[currentImageIndex].src = URL.createObjectURL(imageInputs[currentImageIndex].files[0]);
+        });
+    </script>
+</body>
+
+</html>
